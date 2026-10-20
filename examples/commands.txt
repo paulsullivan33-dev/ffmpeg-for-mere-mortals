@@ -1,0 +1,56 @@
+ffmpeg for Mere Mortals — the commands, collected
+===================================================
+Run from inside examples/. probe() is the chapter 2
+function; every job is probe -> process -> probe.
+
+Inspect (ch. 2)
+  ffprobe clip.mp4
+  probe() { ffprobe -v error -show_entries format=duration,size,bit_rate -show_entries stream=codec_type,codec_name,width,height,avg_frame_rate -of default=noprint_wrappers=1 "$1"; }
+  probe clip.mp4
+
+Remux and choose streams (ch. 4)
+  ffmpeg -hide_banner -y -i clip.mp4 -c copy clip.mkv
+  ffmpeg -hide_banner -y -i clip.mp4 -i subs.srt -map 0 -map 1 -c copy -c:s mov_text clip-subs.mp4
+  ffmpeg -hide_banner -y -i clip-subs.mp4 -map 0:v -map 0:a -c copy clip-nosubs.mp4
+
+Convert audio (ch. 5)
+  ffmpeg -hide_banner -y -i tone.wav -b:a 192k tone.mp3
+  ffmpeg -hide_banner -y -i song.flac -q:a 2 song.mp3
+  ffmpeg -hide_banner -y -i tone.wav -ar 22050 tone-small.wav
+
+Cut (ch. 6)
+  ffmpeg -hide_banner -y -i clip.mp4 -ss 5 -to 9 cut-accurate.mp4
+  ffmpeg -hide_banner -y -ss 5 -i clip.mp4 cut-reencode.mp4
+  ffmpeg -hide_banner -y -ss 5 -i clip.mp4 -c copy cut-copy.mp4
+  ffmpeg -hide_banner -y -i clip.mp4 -ss 5 -t 4 cut-len.mp4
+
+Volume and loudness (ch. 7)
+  ffmpeg -hide_banner -i voice.wav -af volumedetect -f null -
+  ffmpeg -hide_banner -y -i voice.wav -af volume=12dB voice-louder.wav
+  ffmpeg -hide_banner -i voice.wav -af loudnorm=print_format=json -f null -
+  ffmpeg -hide_banner -y -i voice.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-46.55:measured_TP=-42.49:measured_LRA=0.00:measured_thresh=-56.55:offset=-0.04:linear=true -ar 48000 voice-norm.wav
+
+Join (ch. 8)   [parts.txt lists file 'part1.mp4' / file 'part2.mp4']
+  ffmpeg -hide_banner -y -f concat -safe 0 -i parts.txt -c copy joined.mp4
+
+Extract audio (ch. 9)
+  ffmpeg -hide_banner -y -i clip.mp4 -vn -c:a copy clip-audio.m4a
+  ffmpeg -hide_banner -y -i clip.mp4 -vn -b:a 160k clip-audio.mp3
+
+Scale and frame rate (ch. 10)
+  ffmpeg -hide_banner -y -i clip.mp4 -vf scale=160:90 -c:a copy clip-small.mp4
+  ffmpeg -hide_banner -y -i clip.mp4 -vf fps=12 -c:a copy clip-12fps.mp4
+
+Frames and GIFs (ch. 11)
+  ffmpeg -hide_banner -y -ss 7 -i clip.mp4 -frames:v 1 thumb.png
+  ffmpeg -hide_banner -y -ss 2 -t 3 -i clip.mp4 -vf 'fps=10,scale=240:-1:flags=lanczos,palettegen' palette.png
+  ffmpeg -hide_banner -y -ss 2 -t 3 -i clip.mp4 -i palette.png -filter_complex 'fps=10,scale=240:-1:flags=lanczos[x];[x][1:v]paletteuse' clip.gif
+
+Metadata (ch. 12)
+  ffmpeg -hide_banner -y -i tone.mp3 -metadata title='Specimen Tone' -metadata artist='The Lab' -metadata album='Fixtures' -c copy tone-tagged.mp3
+  ffmpeg -hide_banner -y -i tone-tagged.mp3 -map_metadata -1 -c copy tone-clean.mp3
+
+Quality (ch. 13)
+  ffmpeg -hide_banner -y -i scene.mp4 -c:v libx264 -crf 18 scene-crf18.mp4
+  ffmpeg -hide_banner -y -i scene.mp4 -c:v libx264 -crf 28 scene-crf28.mp4
+  ffmpeg -hide_banner -i scene-crf18.mp4 -i scene.mp4 -lavfi ssim -f null -

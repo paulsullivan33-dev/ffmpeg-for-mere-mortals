@@ -1,0 +1,27 @@
+site_name: ffmpeg for Mere Mortals
+site_description: Plain-language ffmpeg. Probing before converting, audio conversion with honest bit rates, trimming measured against the frame, loudness in two passes, joining, scaling, thumbnails, metadata, and quality priced in real bytes, all run on fixtures ffmpeg made itself.
+site_url: https://paulsullivan33-dev.github.io/ffmpeg-for-mere-mortals/
+
+# Guides live at the repo root (nice for GitHub browsing).
+# The deploy workflow copies them into docs/ before building.
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - What ffmpeg Is: what-ffmpeg-is.md
+  - Probing First: probing-first.md
+  - The Command Grammar: the-command-grammar.md
+  - Streams and Codecs: streams-and-codecs.md
+  - Converting Audio: converting-audio.md
+  - Trimming and Cutting: trimming-and-cutting.md
+  - Volume and Loudness: volume-and-loudness.md
+  - Joining Clips: joining-clips.md
+  - Extracting Audio: extracting-audio.md
+  - Scaling and Frame Rate: scaling-and-frame-rate.md
+  - Frames and GIFs: frames-and-gifs.md
+  - Metadata: metadata.md
+  - Quality and CRF: quality-and-crf.md
+  - Batch Jobs and a Worked Job: batch-and-worked-jobs.md
+  - Glossary: glossary.md
+  - Writing Criteria: criteria.md
